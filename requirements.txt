@@ -6,7 +6,7 @@ pyqtgraph==0.13.7
 # ВАЖНО: требуется Python 3.9–3.12 (НЕ 3.13).
 # Если PyPI временно недоступен (пакет в карантине), используйте git-источник:
 #   pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
-tinkoff-investments>=0.2.0b113,<1.0
+>=0.2.0b113,<1.0
 
 # --- Данные / расчёты ---
 numpy==1.26.4
