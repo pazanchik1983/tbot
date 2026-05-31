@@ -1,0 +1,35 @@
+# --- UI ---
+PyQt6==6.7.0
+pyqtgraph==0.13.7
+
+# --- Брокер Т-Инвестиции ---
+# ВАЖНО: требуется Python 3.9–3.12 (НЕ 3.13).
+# Если PyPI временно недоступен (пакет в карантине), используйте git-источник:
+#   pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
+tinkoff-investments>=0.2.0b113,<1.0
+
+# --- Данные / расчёты ---
+numpy==1.26.4
+pandas==2.2.2
+ta==0.11.0                # технические индикаторы (RSI, MACD, EMA и т.д.)
+
+# --- ML (самообучаемые агенты) ---
+scikit-learn==1.5.0
+lightgbm==4.3.0
+joblib==1.4.2
+
+# --- Хранилища ---
+SQLAlchemy==2.0.30
+keyring==25.2.1           # безопасное хранение API-ключа в Windows Credential Manager
+
+# --- Сервис / логи / async ---
+loguru==0.7.2
+pydantic==2.7.1
+pydantic-settings==2.2.1
+python-dateutil==2.9.0
+grpcio==1.62.2
+protobuf==4.25.3
+
+# --- (Опционально) REST API для будущего Android-клиента ---
+fastapi==0.111.0
+uvicorn==0.30.1
