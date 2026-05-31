@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
     steps:
       - name: Скачать код
         uses: actions/checkout@v4
@@ -19,17 +23,20 @@ jobs:
           cache: "pip"
 
       - name: Установить базовые зависимости
-        shell: pwsh
         run: |
           python -m pip install --upgrade pip
-          Get-Content requirements.txt `
-            | Where-Object { $_ -notmatch '^\s*#' -and $_ -notmatch '^\s*tinkoff-investments' -and $_.Trim() -ne '' } `
-            | Set-Content requirements-core.txt
+          # Фильтруем requirements.txt: убираем комментарии, пустые строки и tinkoff-investments
+          (Get-Content requirements.txt) |
+            Where-Object {
+              $_ -notmatch '^\s*#' -and
+              $_ -notmatch 'tinkoff-investments' -and
+              $_.Trim() -ne ''
+            } |
+            Set-Content requirements-core.txt
           pip install -r requirements-core.txt
           pip install -r requirements-build.txt
 
       - name: Установить SDK Т-Инвестиций
-        shell: pwsh
         continue-on-error: true
         run: |
           pip install "tinkoff-investments>=0.2.0b113"
@@ -43,20 +50,18 @@ jobs:
           }
 
       - name: Прогнать тесты
-        shell: pwsh
         run: |
           pip install pytest
           python -m pytest tbot/tests -q
 
       - name: Собрать TBot.exe
-        shell: pwsh
-        run: |
-          python packaging/build_exe.py
+        run: python packaging/build_exe.py
 
       - name: Упаковать в ZIP
-        shell: pwsh
         run: |
-          Compress-Archive -Path dist/TBot/* -DestinationPath TBot-Windows.zip -Force
+          $zip = "TBot-Windows.zip"
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+          Compress-Archive -Path (Get-ChildItem -Path dist/TBot).FullName -DestinationPath $zip -Force
 
       - name: Загрузить готовый .exe
         uses: actions/upload-artifact@v4
