@@ -25,7 +25,6 @@ jobs:
       - name: Установить базовые зависимости
         run: |
           python -m pip install --upgrade pip
-          # Фильтруем requirements.txt: убираем комментарии, пустые строки и tinkoff-investments
           (Get-Content requirements.txt) |
             Where-Object {
               $_ -notmatch '^\s*#' -and
@@ -39,7 +38,7 @@ jobs:
       - name: Установить SDK Т-Инвестиций
         continue-on-error: true
         run: |
-          pip install "tinkoff-investments>=0.2.0b113"
+          pip install --pre "tinkoff-investments>=0.2.0b113"
           if ($LASTEXITCODE -ne 0) {
             Write-Host "PyPI недоступен, пробую из git..."
             pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
