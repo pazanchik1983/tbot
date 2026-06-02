@@ -22,23 +22,39 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Установить зависимости
+      - name: Установить базовые зависимости
         run: |
+          $ErrorActionPreference = 'Stop'
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # Ставим всё КРОМЕ tinkoff (он beta, обычный pip его не возьмёт)
+          pip install PyQt6==6.7.0 pyqtgraph==0.13.7 numpy==1.26.4 pandas==2.2.2 ta==0.11.0 scikit-learn==1.5.0 lightgbm==4.3.0 joblib==1.4.2 SQLAlchemy==2.0.30 keyring==25.2.1 loguru==0.7.2 pydantic==2.7.1 pydantic-settings==2.2.1 python-dateutil==2.9.0 grpcio==1.62.2 protobuf==4.25.3 fastapi==0.111.0 uvicorn==0.30.1
           pip install -r requirements-build.txt
+
+      - name: Установить SDK Т-Инвестиций
+        continue-on-error: true
+        run: |
+          $ErrorActionPreference = 'Stop'
+          pip install --pre "tinkoff-investments>=0.2.0b113,<1.0"
+          if (-not $?) {
+            Write-Host "PyPI не сработал, пробую git..."
+            pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
+          }
 
       - name: Прогнать тесты
         continue-on-error: true
         run: |
+          $ErrorActionPreference = 'Stop'
           pip install pytest
           python -m pytest tbot/tests -q
 
       - name: Собрать TBot.exe
-        run: python packaging/build_exe.py
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python packaging/build_exe.py
 
       - name: Упаковать в ZIP
         run: |
+          $ErrorActionPreference = 'Stop'
           $zip = "TBot-Windows.zip"
           if (Test-Path $zip) { Remove-Item $zip -Force }
           Compress-Archive -Path (Get-ChildItem -Path dist/TBot).FullName -DestinationPath $zip -Force
