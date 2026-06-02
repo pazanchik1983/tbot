@@ -30,13 +30,16 @@ def main() -> int:
         sys.executable, "-m", "PyInstaller",
         "--name", "TBot",
         "--noconfirm", "--clean",
-        "--windowed",                     # no console window
+        "--windowed",
         "--icon", str(ROOT / "tbot/resources/app.ico"),
         "--collect-submodules", "tinkoff.invest",
         "--collect-submodules", "lightgbm",
+        "--collect-submodules", "scipy",          # <-- НОВОЕ
         "--collect-data", "ta",
         "--hidden-import", "pyqtgraph",
         "--hidden-import", "keyring.backends.Windows",
+        "--hidden-import", "scipy._cyutility",    # <-- НОВОЕ
+        "--hidden-import", "scipy._lib._ccallback_c",  # <-- НОВОЕ
         "--add-data", f"{ROOT / 'tbot/resources'};tbot/resources",
         "tbot/__main__.py",
     ]
