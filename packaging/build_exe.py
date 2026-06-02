@@ -40,6 +40,7 @@ def main() -> int:
         "--hidden-import", "keyring.backends.Windows",
         "--hidden-import", "scipy._cyutility",    # <-- НОВОЕ
         "--hidden-import", "scipy._lib._ccallback_c",  # <-- НОВОЕ
+        "--hidden-import", "loguru",
         "--add-data", f"{ROOT / 'tbot/resources'};tbot/resources",
         "tbot/__main__.py",
     ]
