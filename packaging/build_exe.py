@@ -1,9 +1,9 @@
-"""Сборка .exe для Windows 11 через PyInstaller.
+"""Build .exe for Windows 11 via PyInstaller.
 
-Запуск из корня проекта на Windows:
+Run from project root on Windows:
     python packaging/build_exe.py
 
-Результат: dist/TBot/TBot.exe
+Result: dist/TBot/TBot.exe
 """
 from __future__ import annotations
 
@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> int:
     if sys.platform != "win32":
-        print("[WARN] Скрипт рассчитан на Windows. На других ОС PyInstaller тоже "
-              "сработает, но .exe будет valid только для текущей платформы.")
+        print("[WARN] This script is designed for Windows. On other OS PyInstaller "
+              "will also work, but .exe will be valid only for current platform.")
 
-    # очистка предыдущей сборки
+    # cleanup previous build
     for d in ("build", "dist"):
         p = ROOT / d
         if p.exists():
@@ -30,7 +30,7 @@ def main() -> int:
         sys.executable, "-m", "PyInstaller",
         "--name", "TBot",
         "--noconfirm", "--clean",
-        "--windowed",                     # без консольного окна
+        "--windowed",                     # no console window
         "--icon", str(ROOT / "tbot/resources/app.ico"),
         "--collect-submodules", "tinkoff.invest",
         "--collect-submodules", "lightgbm",
@@ -41,12 +41,12 @@ def main() -> int:
         "tbot/__main__.py",
     ]
 
-    # убираем флаг --icon, если иконки нет
+    # remove --icon if icon file missing
     if not (ROOT / "tbot/resources/app.ico").exists():
         i = cmd.index("--icon")
         del cmd[i:i + 2]
 
-    # ZASHITA: убираем --add-data, если папки resources нет
+    # remove --add-data if resources folder missing
     if not (ROOT / "tbot/resources").exists():
         i = cmd.index("--add-data")
         del cmd[i:i + 2]
@@ -56,8 +56,8 @@ def main() -> int:
     if r != 0:
         return r
 
-    print("\n[OK] Готово. Запуск: dist/TBot/TBot.exe")
-    print("Для инсталлятора .exe запустите: iscc packaging/installer.iss")
+    print("\n[OK] Build complete. Run: dist/TBot/TBot.exe")
+    print("For installer run: iscc packaging/installer.iss")
     return 0
 
 
