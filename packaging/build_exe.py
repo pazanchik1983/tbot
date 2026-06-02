@@ -20,7 +20,6 @@ def main() -> int:
         print("[WARN] This script is designed for Windows. On other OS PyInstaller "
               "will also work, but .exe will be valid only for current platform.")
 
-    # cleanup previous build
     for d in ("build", "dist"):
         p = ROOT / d
         if p.exists():
@@ -30,31 +29,21 @@ def main() -> int:
         sys.executable, "-m", "PyInstaller",
         "--name", "TBot",
         "--noconfirm", "--clean",
-        "--windowed",                     # no console window
+        "--windowed",
         "--icon", str(ROOT / "tbot/resources/app.ico"),
         "--collect-submodules", "tinkoff.invest",
         "--collect-submodules", "lightgbm",
-        "--collect-submodules", "loguru",
-        "--collect-submodules", "pydantic",
-        "--collect-submodules", "sqlalchemy",
-        "--collect-submodules", "sklearn",
         "--collect-data", "ta",
         "--hidden-import", "pyqtgraph",
         "--hidden-import", "keyring.backends.Windows",
-        "--hidden-import", "loguru",
-        "--hidden-import", "loguru._logger",
-        "--hidden-import", "pydantic",
-        "--hidden-import", "pydantic_settings",
         "--add-data", f"{ROOT / 'tbot/resources'};tbot/resources",
         "tbot/__main__.py",
     ]
 
-    # remove --icon if icon file missing
     if not (ROOT / "tbot/resources/app.ico").exists():
         i = cmd.index("--icon")
         del cmd[i:i + 2]
 
-    # remove --add-data if resources folder missing
     if not (ROOT / "tbot/resources").exists():
         i = cmd.index("--add-data")
         del cmd[i:i + 2]
