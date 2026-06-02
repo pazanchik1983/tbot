@@ -25,17 +25,10 @@ jobs:
       - name: Установить зависимости
         run: |
           python -m pip install --upgrade pip
-          # Ставим ВСЕ пакеты из requirements.txt (включая tinkoff)
           pip install -r requirements.txt
-          # Проверяем, установился ли tinkoff
-          python -c "import tinkoff.invest" 2>$null
-          if (-not $?) {
-            Write-Host "PyPI не сработал, ставлю tinkoff из git..."
-            pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
-          }
           pip install -r requirements-build.txt
 
-           - name: Прогнать тесты
+      - name: Прогнать тесты
         continue-on-error: true
         run: |
           pip install pytest
