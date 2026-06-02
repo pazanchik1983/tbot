@@ -22,31 +22,18 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Установить базовые зависимости
+      - name: Установить зависимости
         run: |
           python -m pip install --upgrade pip
-          (Get-Content requirements.txt) |
-            Where-Object {
-              $_ -notmatch '^\s*#' -and
-              $_ -notmatch 'tinkoff-investments' -and
-              $_.Trim() -ne ''
-            } |
-            Set-Content requirements-core.txt
-          pip install -r requirements-core.txt
-          pip install -r requirements-build.txt
-
-      - name: Установить SDK Т-Инвестиций
-        continue-on-error: true
-        run: |
-          pip install --pre "tinkoff-investments>=0.2.0b113"
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "PyPI недоступен, пробую из git..."
+          # Ставим ВСЕ пакеты из requirements.txt (включая tinkoff)
+          pip install -r requirements.txt
+          # Проверяем, установился ли tinkoff
+          python -c "import tinkoff.invest" 2>$null
+          if (-not $?) {
+            Write-Host "PyPI не сработал, ставлю tinkoff из git..."
             pip install "git+https://github.com/RussianInvestments/invest-python.git@main"
           }
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "::warning::SDK не установлен — EXE соберётся, но реальное API работать не будет."
-            exit 0
-          }
+          pip install -r requirements-build.txt
 
       - name: Прогнать тесты
         run: |
